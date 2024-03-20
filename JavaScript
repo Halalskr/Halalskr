@@ -1,0 +1,46 @@
+// Express framework'ü kullanarak bir HTTP sunucusu oluşturuyoruz
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// Kullanıcıların sağlık verilerini depolamak için bir veritabanı veya başka bir depolama yöntemi kullanılabilir.
+
+// Kullanıcı kaydetme endpoint'i
+app.post('/kullanici/kaydet', (req, res) => {
+  // Kullanıcı bilgilerini al
+  const kullaniciVerileri = req.body;
+  
+  // Veritabanına kullanıcı bilgilerini kaydet
+  // Örneğin: kullaniciVerileri.isim, kullaniciVerileri.yas, vb. verileri veritabanına kaydedebilirsiniz.
+  
+  res.json({ mesaj: 'Kullanıcı başarıyla kaydedildi.' });
+});
+
+// Sağlık verisi kaydetme endpoint'i
+app.post('/kullanici/saglik_verisi', (req, res) => {
+  // Sağlık verilerini al
+  const saglikVerisi = req.body;
+  
+  // Veritabanına sağlık verilerini kaydet
+  // Örneğin: saglikVerisi.kilo, saglikVerisi.kanBasinci, vb. verileri veritabanına kaydedebilirsiniz.
+  
+  res.json({ mesaj: 'Sağlık verileri başarıyla kaydedildi.' });
+});
+
+// Kullanıcıya ait sağlık verilerini getirme endpoint'i
+app.get('/kullanici/saglik_verileri', (req, res) => {
+  // Kullanıcıya ait sağlık verilerini veritabanından getir
+  // Örneğin: Kullanıcıya ait tüm sağlık verilerini veritabanından getirebilir ve JSON formatında kullanıcıya gönderebilirsiniz.
+  const saglikVerileri = {
+    kilo: 70,
+    kanBasinci: '120/80',
+    // Diğer sağlık verileri
+  };
+  
+  res.json(saglikVerileri);
+});
+
+// Express sunucusunu belirtilen portta başlatma
+app.listen(port, () => {
+  console.log(`Uygulama ${port} portunda çalışıyor.`);
+});
