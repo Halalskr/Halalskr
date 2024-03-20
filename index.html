@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combined Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        /* Styles for the combined page */
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: 'Inter';
+            background-color: black;
+            overflow: hidden;
+            position: relative;
+            background-image: url('/storage/emulated/0/Pictures/WhatsApp/IMG-20240317-WA0002.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .vid-container {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .bgvid.back {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+        }
+
+        .inner-container {
+            width: 400px;
+            height: 600px;
+            position: absolute;
+            top: calc(50vh - 200px);
+            left: calc(50vw - 200px);
+            overflow: hidden;
+            border-radius: 7px;
+        }
+
+        .box {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            font-family: 'Inter';
+            color: #fff;
+            background: rgba(0, 0, 0, 28%);
+            padding: 30px 0px;
+            border-radius: 7px;
+        }
+
+        .box h1 {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 30px;
+        }
+
+        .box input {
+            display: block;
+            width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            border-radius: 7px;
+            border: 0;
+        }
+
+        input::placeholder {
+            color: rgb(182, 171, 163);
+        }
+
+        .box button {
+            background: #2d2f36;
+            border: 0;
+            color: #fff;
+            padding: 10px;
+            font-size: 20px;
+            width: 330px;
+            margin: 20px auto;
+            display: block;
+            cursor: pointer;
+            border-radius: 7px;
+        }
+
+        .box button:active {
+            background: #000000;
+        }
+
+        .box p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .box p span {
+            cursor: pointer;
+            color: #666;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Container -->
+    <div class="vid-container">
+        <video id="Video1" class="bgvid back" autoplay muted preload="auto" loop>
+            <source src="../../../Users/Lab2Pc1/Desktop/WhatsApp Video 2024-03-18 at 09.24.05.mp4" type="video/mp4">
+        </video>
+        <div class="inner-container">
+            <div class="box" id="loginBox">
+                <h1>Login</h1>
+                <input type="text" id="username" placeholder="Username"/>
+                <input type="password" id="password" placeholder="Password"/>
+                <button onclick="login()" class="login-btn">Login</button>
+                <p>Not a member? <span class="signup" onclick="showRegistration()">Sign Up</span></p>
+            </div>
+            <div class="box" id="registerBox" style="display: none;">
+                <h1>Register</h1>
+                <input type="text" id="regUsername" placeholder="Username"/>
+                <input type="tel" id="regPhoneNumber" placeholder="Phone Number"/>
+                <input type="password" id="regPassword" placeholder="Password"/>
+                <input type="text" id="verificationCode" placeholder="Verification Code"/>
+                <button onclick="register()" class="register-btn">Register</button>
+                <button onclick="sendVerificationCode()" class="send-code-btn">Send Verification Code</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Generator App Container -->
+    <div id="imageGeneratorContainer" class="container text-center" style="display: none;">
+        <h1>Image Generator App</h1>
+        <p>Enter text to generate an image:</p>
+        <input type="text" id="textInput" class="form-control mb-3" placeholder="Enter text">
+        <button onclick="generateImage()" class="btn btn-primary">Generate Image</button>
+        <div id="imageContainer" class="mt-3"></div>
+        <!-- Play/Pause Butonu -->
+        <button onclick="toggleAudio()" class="btn btn-secondary">Play/Pause Music</button>
+    </div>
+
+    <!-- Canvas for Rainfall Animation -->
+    <canvas id="rainfall"></canvas>
+
+    <!-- Audio for Background Music -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="/storage/emulated/0/Music/Telegram/aafd839c-2a38-4209-b6be-c91a51197ccb.mp3" type="audio/mpeg">
+        Your browser does not support the audio tag.
+    </audio>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        const canvas = document.getElementById('rainfall');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to match window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Create an array to store the raindrops
+        const raindrops = [];
+
+        // Object to store registered users
+        const registeredUsers = {};
+
+        // Function to create a new raindrop
+        function createRaindrop() {
+            const x = Math.random() * canvas.width;
+            const y = -5;
+            const speed = Math.random() * 5 + 2;
+            const length = Math.random() * 20 + 10;
+
+            raindrops.push({ x, y, speed, length });
+        }
+
+        // Function to update the raindrops' positions
+        function updateRaindrops() {
+            for (let i = 0; i < raindrops.length; i++) {
+                const raindrop = raindrops[i];
+
+                raindrop.y += raindrop.speed;
+
+                if (raindrop.y > canvas.height) {
+                    raindrops.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        // Function to draw the raindrops
+        function drawRaindrops() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+
+            for (let i = 0; i < raindrops.length; i++) {
+                const raindrop = raindrops[i];
+
+                ctx.beginPath();
+                ctx.moveTo(raindrop.x, raindrop.y);
+                ctx.lineTo(raindrop.x, raindrop.y + raindrop.length);
+                ctx.stroke();
+            }
+        }
+
+        // Function to animate the raindrops
+        function animate() {
+            createRaindrop();
+            updateRaindrops();
+            drawRaindrops();
+
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation
+        animate();
+
+        // Function to handle login
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Check if username and password match
+            if (registeredUsers[username] && registeredUsers[username].password === password) {
+                alert('Login successful!');
+                // Redirect to image generator page
+                document.getElementById('imageGeneratorContainer').style.display = 'block';
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementsByClassName('vid-container')[0].style.display = 'none';
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+        }
+
+        // Function to show registration form
+        function showRegistration() {
+            document.getElementById('registerBox').style.display = 'block';
+            document.getElementById('loginBox').style.display = 'none';
+        }
+
+        // Function to handle registration
+        function register() {
+            const regUsername = document.getElementById('regUsername').value;
+            const regPhoneNumber = document.getElementById('regPhoneNumber').value;
+            const regPassword = document.getElementById('regPassword').value;
+            const verificationCode = document.getElementById('verificationCode').value;
+
+            // Check if username already exists
+            if (registeredUsers[regUsername]) {
+                alert('Username already exists. Please choose a different one.');
+                return;
+            }
+
+            // Check if verification code is correct
+            if (registeredUsers[regPhoneNumber] && registeredUsers[regPhoneNumber].verificationCode !== verificationCode) {
+                alert('Incorrect verification code. Please enter the correct one.');
+                return;
+            }
+
+            // Store user information
+            registeredUsers[regUsername] = {
+                phoneNumber: regPhoneNumber,
+                password: regPassword
+            };
+
+            alert('Registration successful! Please login with your new credentials.');
+            // Redirect to login page
+            document.getElementById('loginBox').style.display = 'block';
+            document.getElementById('registerBox').style.display = 'none';
+        }
+
+        // Function to send verification code
+        function sendVerificationCode() {
+            const regPhoneNumber = document.getElementById('regPhoneNumber').value;
+            // POST isteği yapmak için kullanacağımız veriler
+            const data = {
+                number: regPhoneNumber,
+                adet: 1 // Gönderilecek SMS sayısı
+            };
+
+            const apiUrl = 'http://20.82.138.38/api/legaliapi/smsvip.php';
+
+            // POST isteği oluşturma
+            const request = new XMLHttpRequest();
+            request.open('POST', apiUrl, true);
+            request.setRequestHeader('Content-Type', 'application/json');
+
+            // İstek tamamlandığında gerçekleştirilecek işlemler
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    // Başarılı işlem
+                    alert('Verification code sent successfully.');
+                } else {
+                    // Hata durumu
+                    alert('Error sending verification code.');
+                }
+            };
+
+            // İstek başlatma
+            request.send(JSON.stringify(data));
+        }
+
+        // Function to generate image based on text input
+        function generateImage() {
+            const text = document.getElementById('textInput').value;
+            const imageContainer = document.getElementById('imageContainer');
+
+            // You can make an AJAX call here to fetch image based on text input
+            // For demonstration purposes, let's just display a placeholder image
+            const placeholderImageUrl = 'https://source.unsplash.com/featured/?' + text;
+
+            const imageElement = document.createElement('img');
+            imageElement.setAttribute('src', placeholderImageUrl);
+            imageElement.setAttribute('class', 'img-fluid');
+
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(imageElement);
+        }
+
+        // Function to toggle background music
+        function toggleAudio() {
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic.paused) {
+                bgMusic.play();
+            } else {
+                bgMusic.pause();
+            }
+        }
+    </script>
+</body>
+</html>
