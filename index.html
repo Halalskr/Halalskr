@@ -1,4 +1,4 @@
-<!DOCTYPE html><h1>halil</h1>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -118,13 +118,6 @@
             left: 0;
             z-index: -1;
         }
-
-        /* Styles for AdSense */
-        .ads-container {
-            text-align: center;
-            margin-top: 20px;
-        }
-
     </style>
 </head>
 <body>
@@ -161,7 +154,7 @@
         <button onclick="generateImage()" class="btn btn-primary">Generate Image</button>
         <div id="imageContainer" class="mt-3"></div>
         <!-- Play/Pause Butonu -->
-        <button onclick="toggleAudio()" class="btn btn-secondary">Play/Pause Music</button>
+        <button onclick="toggleAudio()" class="btn btn-secondary">Play/PauseMusic</button>
     </div>
 
     <!-- Canvas for Rainfall Animation -->
@@ -282,7 +275,8 @@
             // Check if verification code is correct
             if (registeredUsers[regPhoneNumber] && registeredUsers[regPhoneNumber].verificationCode !== verificationCode) {
                 alert('Incorrect verification code. Please enter the correct one.');
-  }
+                return;
+            }
 
             // Store user information
             registeredUsers[regUsername] = {
@@ -355,19 +349,18 @@
         }
     </script>
 
-    <!-- AdSense Code -->
-    <div class="ads-container">
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6310290450672104"
-             crossorigin="anonymous"></script>
-        <ins class="adsbygoogle"
-             style="display:block; text-align:center;"
-             data-ad-layout="in-article"
-             data-ad-format="fluid"
-             data-ad-client="ca-pub-6310290450672104"
-             data-ad-slot="4211164945"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-    </div>
+    <!-- AdSense Ad -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6310290450672104"
+     crossorigin="anonymous"></script>
+    <ins class="adsbygoogle"
+     style="display:block; text-align:center;"
+     data-ad-layout="in-article"
+     data-ad-format="fluid"
+     data-ad-client="ca-pub-6310290450672104"
+     data-ad-slot="4211164945"></ins>
+    <script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+
 </body>
-</html>              return;
+</html>
