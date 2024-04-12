@@ -1,48 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serdar Yazısı</title>
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #111;
-    }
-    
-    .text {
-        font-size: 100px;
-        font-family: 'Arial', sans-serif;
-        color: #ff0; /* Sarı renk */
-        position: relative;
-    }
-    
-    .text::before {
-        content: 'SERDAR';
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1;
-        color: #0ff; /* Mavi renk */
-        animation: flicker 1.5s infinite alternate;
-    }
-    
-    @keyframes flicker {
-        0% {
-            text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itiraf Sitesi</title>
+    <style>
+        /* Genel stil */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
         }
-        100% {
-            text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 90px #0ff, 0 0 100px #0ff, 0 0 150px #0ff;
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: relative;
         }
-    }
-</style>
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .menu-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .menu ul li {
+            margin-bottom: 10px;
+        }
+
+        .menu ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Admin Paneli stilleri */
+        #admin-panel {
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        #admin-panel h2 {
+            margin-bottom: 10px;
+        }
+
+        #admin-panel input[type="text"],
+        #admin-panel input[type="password"] {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        #admin-panel button {
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #admin-panel button:hover {
+            background-color: #555;
+        }
+
+        /* Itiraf Et bölümü stilleri */
+        #itiraf-et {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #itiraf {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #paylas-button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #paylas-button:hover {
+            background-color: #555;
+        }
+
+        #itiraf-mesaj {
+            margin-top: 20px;
+            display: none; /* Başlangıçta gizli */
+        }
+    </style>
 </head>
 <body>
-<div class="text">SERDAR</div>
+    <header>
+        <h1>Itiraf Sitesi</h1>
+        <nav>
+            <ul>
+                <li><a href="#" id="ana-sayfa">Ana Sayfa</a></li>
+                <li><a href="#" id="itiraf-et">Itiraf Et</a></li>
+                <li><a href="#" id="admin-panel">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="main">
+        <h2>Hoşgeldiniz!</h2>
+        <p>Burada yapılan itirafları okuyabilirsiniz.</p>
+    </section>
+
+    <section id="itiraf-et" style="display:none;">
+        <h2>Itiraf Et</h2>
+        <textarea id="itiraf" rows="4" placeholder="İtirafınızı buraya yazın"></textarea><br>
+        <button id="paylas-button">Paylaş</button>
+        <div id="itiraf-mesaj">
+            Itirafınız başarıyla paylaşıldı!
+        </div>
+    </section>
+
+    <section id="admin-panel" style="display:none;">
+        <h2>Admin Paneli</h2>
+        <form id="admin-form">
+            <label for="password">Şifre:</label><br>
+            <input type="password" id="password" name="password"><br>
+            <button type="submit">Giriş</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Itiraf Sitesi</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            showPage("main");
+        });
+
+        document.getElementById("ana-sayfa").addEventListener("click", function() {
+            showPage("main");
+        });
+
+        document.getElementById("itiraf-et").addEventListener("click", function() {
+            showPage("itiraf-et");
+        });
+
+        document.getElementById("admin-panel").addEventListener("click", function() {
+            var password = prompt("Admin şifresini girin:");
+            if (password === "BOZKURT") {
+                showPage("admin-panel");
+            } else {
+                alert("Yanlış şifre, giriş başarısız!");
+            }
+        });
+
+        document.getElementById("admin-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Formun submit olayını engelle
+            var password = document.getElementById("password").value;
+            if (password === "BOZKURT") {
+                showPage("admin-panel");
+            } else {
+                alert("Yanlış şifre, giriş başarısız!");
+            }
+        });
+
+        document.getElementById("paylas-button").addEventListener("click", function() {
+            var itiraf = document.getElementById("itiraf").value;
+            var itirafMesaj = document.getElementById("itiraf-mesaj");
+            if (itiraf.trim() !== "") {
+                // Itiraf mesajını göster
+                itirafMesaj.style.display = "block";
+                // Itiraf alanını temizle
+                document.getElementById("itiraf").value = "";
+                // 3 saniye sonra mesajı gizle
+                setTimeout(function() {
+                    itirafMesaj.style.display = "none";
+                }, 3000);
+            } else {
+                alert("Lütfen bir itiraf yazın!");
+            }
+        });
+
+        function showPage(pageId) {
+            var pages = document.querySelectorAll("section");
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].style.display = "none";
+            }
+            document.getElementById(pageId).style.display = "block";
+        }
+    </script>
 </body>
-</html>
+    </html>
