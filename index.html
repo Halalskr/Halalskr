@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Itiraf Sitesi</title>
     <style>
-        /* General style */
+        /* Genel stil */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -66,7 +66,7 @@
             cursor: pointer;
         }
 
-        /* Visual effects */
+        /* Görsel efektler */
         @keyframes flash {
             0% {
                 opacity: 1;
@@ -76,7 +76,7 @@
             }
         }
 
-        /* Confession form styles */
+        /* Itiraf Et bölümü stilleri */
         #itiraf-et {
             padding: 20px;
             text-align: center;
@@ -104,7 +104,13 @@
 
         #itiraf-mesaj {
             margin-top: 20px;
-            display: none; /* Initially hidden */
+            display: none; /* Başlangıçta gizli */
+        }
+
+        .confession {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -115,7 +121,7 @@
             <ul>
                 <li><a href="#" id="ana-sayfa">Ana Sayfa</a></li>
                 <li><a href="#" id="itiraf-et-buton">Itiraf Et</a></li>
-                <li><a href="#" id="admin-menu-toggle">Admin</a></li>
+                <li><a href="#" id="admin-menu-toggle">:</a></li>
             </ul>
         </nav>
         <div id="admin-menu" style="display: none;">
@@ -129,7 +135,9 @@
 
     <section id="main">
         <h2>Hoşgeldiniz!</h2>
-        <p>Burada itirafları okuyabilir ve kendi itirafınızı gönderebilirsiniz.</p>
+        <div id="confession-list">
+            <!-- Buraya itiraflar eklenecek -->
+        </div>
     </section>
 
     <section id="itiraf-et" style="display:none;">
@@ -144,14 +152,6 @@
     </footer>
 
     <script>
-        // Admin password
-        var adminPassword = "BOZKURT";
-
-        // Check if the entered password is correct
-        function checkAdminPassword(password) {
-            return password === adminPassword;
-        }
-
         document.addEventListener("DOMContentLoaded", function() {
             showPage("main");
         });
@@ -164,75 +164,43 @@
             showPage("itiraf-et");
         });
 
-        // Admin menu toggle
+        // Admin menüsünü açma/kapatma
         var adminMenu = document.getElementById("admin-menu");
         var adminMenuToggle = document.getElementById("admin-menu-toggle");
-        var adminMenuOpen = false;
-
         adminMenuToggle.addEventListener("click", function() {
-            if (adminMenuOpen) {
+            if (adminMenu.style.display === "block") {
                 adminMenu.style.display = "none";
-                adminMenuOpen = false;
             } else {
-                var password = prompt("Admin şifresini girin:");
-                if (checkAdminPassword(password)) {
-                    adminMenu.style.display = "block";
-                    adminMenuOpen = true;
-                } else {
-                    alert("Yanlış admin şifresi!");
-                }
+                adminMenu.style.display = "block";
             }
         });
 
-        // Close admin menu when clicking outside
-        document.addEventListener("click", function(event) {
-            var target = event.target;
-            if (!target.closest("#admin-menu") && !target.closest("#admin-menu-toggle")) {
-                adminMenu.style.display = "none";
-                adminMenuOpen = false;
-            }
-        });
+        // Function to check admin password
+        function checkAdminPassword(password) {
+            return password === "BOZKURT";
+        }
 
-        // Delete confession button
+        // Itirafı sil button
         document.getElementById("itiraf-sil").addEventListener("click", function() {
             var password = prompt("Admin şifresini girin:");
             if (checkAdminPassword(password)) {
                 var itirafID = prompt("Silmek istediğiniz itirafın ID'sini girin:");
-                // Here, the deletion process will take place
-                // For example: Confessions with the given ID can be deleted from the database
-            } else {
-                alert("Yanlış admin şifresi!");
-            }
-        });
-
-        // Change background button
-        document.getElementById("arka-plan-degistir").addEventListener("click", function() {
-            var password = prompt("Admin şifresini girin:");
-            if (checkAdminPassword(password)) {
-                var yeniArkaPlan = prompt("Yeni arka plan resmi veya video URL'sini girin:");
-                // Here, the background change process will take place
-                // For example: The background-image property of the Body element can be used to change the background
-                // Check if the URL is a video from YouTube
-                if (yeniArkaPlan.includes("youtube")) {
-                    var videoBackground = document.getElementById("video-background");
-                    var videoSource = document.querySelector("#video-background source");videoBackground.style.display = "block"; // Show the video background
-                    videoSource.setAttribute("src", yeniArkaPlan);
-                    videoBackground.load(); // Load the new video
+                var itirafElement = document.getElementById(itirafID);
+                if (itirafElement) {
+                    itirafElement.remove();
                 } else {
-                    document.body.style.backgroundImage = "url('" + yeniArkaPlan + "')"; // Change the background image
+                    alert("Böyle bir itiraf bulunamadı!");
                 }
             } else {
                 alert("Yanlış admin şifresi!");
             }
         });
 
-        // Add music button
+        // Müzik ekle button
         document.getElementById("muzik-ekle").addEventListener("click", function() {
             var password = prompt("Admin şifresini girin:");
             if (checkAdminPassword(password)) {
                 var yeniMuzik = prompt("Yeni müzik URL'sini girin:");
-                // Here, the music adding process will take place
-                // For example: Audio element can be used to add music to the page
                 var audioElement = document.createElement("audio");
                 audioElement.src = yeniMuzik;
                 audioElement.controls = true;
@@ -243,39 +211,42 @@
         });
 
         document.getElementById("paylas-button").addEventListener("click", function() {
-            var itiraf = document.getElementById("itiraf").value;
-            var itirafMesaj = document.getElementById("itiraf-mesaj");
-            if (itiraf.trim() !== "") {
-                // Display confession message
-                itirafMesaj.style.display = "block";
-                // Clear confession textarea
-                document.getElementById("itiraf").value = "";
-                // Hide the message after 3 seconds
-                setTimeout(function() {
-                    itirafMesaj.style.display = "none";
-                }, 3000);
-                // Display the confession on the main page
-                displayConfession(itiraf);
-            } else {
-                alert("Lütfen bir itiraf yazın!");
-            }
-        });
+    var itiraf = document.getElementById("itiraf").value;
+    var itirafMesaj = document.getElementById("itiraf-mesaj");
+    if (itiraf.trim() !== "") {
+        // Itiraf mesajını göster
+        itirafMesaj.style.display = "block";
+        
+        // Itiraf divini oluştur
+        var confessionDiv = document.createElement("div");
+        confessionDiv.classList.add("confession");
+        var confessionID = "confession-" + Date.now(); // Unique ID
+        confessionDiv.id = confessionID;
+        confessionDiv.innerHTML = "<strong>ID:</strong> " + confessionID + "<br>" + itiraf;
 
-        function showPage(pageId) {
-            var pages = document.querySelectorAll("section");
-            for (var i = 0; i < pages.length; i++) {
-                pages[i].style.display = "none";
-            }
-            document.getElementById(pageId).style.display = "block";
-        }
+        // Confession listesine ekle
+        var confessionList = document.getElementById("confession-list");
+        confessionList.appendChild(confessionDiv);
 
-        // Function to display confession on the main page
-        function displayConfession(confession) {
-            var confessionContainer = document.createElement("div");
-            confessionContainer.classList.add("confession");
-            confessionContainer.textContent = confession;
-            document.getElementById("main").appendChild(confessionContainer);
-        }
-    </script>
+        // Itiraf alanını temizle
+        document.getElementById("itiraf").value = "";
+
+        // 3 saniye sonra mesajı gizle
+        setTimeout(function() {
+            itirafMesaj.style.display = "none";
+        }, 3000);
+    } else {
+        alert("Lütfen bir itiraf yazın!");
+    }
+});
+
+function showPage(pageId) {
+    var pages = document.querySelectorAll("section");
+    for (var i = 0; i < pages.length; i++) {
+        pages[i].style.display = "none";
+    }
+    document.getElementById(pageId).style.display = "block";
+}
+</script>
 </body>
 </html>
