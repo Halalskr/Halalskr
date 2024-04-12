@@ -108,8 +108,8 @@
         }
 
         .confession {
-            padding: 10px;
             border: 1px solid #ccc;
+            padding: 10px;
             margin-bottom: 10px;
         }
     </style>
@@ -124,7 +124,7 @@
                 <li><a href="#" id="admin-menu-toggle">:</a></li>
             </ul>
         </nav>
-        <div id="admin-menu" style="display: none;">
+        <div id="admin-menu">
             <ul>
                 <li><button id="itiraf-sil">Itiraf Sil</button></li>
                 <li><button id="arka-plan-degistir">Arka Plan Değiştir</button></li>
@@ -135,9 +135,8 @@
 
     <section id="main">
         <h2>Hoşgeldiniz!</h2>
-        <div id="confession-list">
-            <!-- Buraya itiraflar eklenecek -->
-        </div>
+        <p>Burada itirafları okuyabilir ve kendi itirafınızı gönderebilirsiniz.</p>
+        <div id="confession-list"></div>
     </section>
 
     <section id="itiraf-et" style="display:none;">
@@ -152,6 +151,8 @@
     </footer>
 
     <script>
+        var adminPassword = "BOZKURT"; // Admin şifresi
+
         document.addEventListener("DOMContentLoaded", function() {
             showPage("main");
         });
@@ -167,27 +168,35 @@
         // Admin menüsünü açma/kapatma
         var adminMenu = document.getElementById("admin-menu");
         var adminMenuToggle = document.getElementById("admin-menu-toggle");
+        var adminMenuOpen = false;
+
         adminMenuToggle.addEventListener("click", function() {
-            if (adminMenu.style.display === "block") {
+            if (adminMenuOpen) {
                 adminMenu.style.display = "none";
+                adminMenuOpen = false;
             } else {
                 adminMenu.style.display = "block";
+                adminMenuOpen = true;
             }
         });
 
-        // Function to check admin password
-        function checkAdminPassword(password) {
-            return password === "BOZKURT";
-        }
+        // Documenta tıklanınca admin menüsünü kapat
+        document.addEventListener("click", function(event) {
+            var target = event.target;
+            if (!target.closest("#admin-menu") && !target.closest("#admin-menu-toggle")) {
+                adminMenu.style.display = "none";
+                adminMenuOpen = false;
+            }
+        });
 
-        // Itirafı sil button
+        // Itirafı sil butonu
         document.getElementById("itiraf-sil").addEventListener("click", function() {
-            var password = prompt("Admin şifresini girin:");
-            if (checkAdminPassword(password)) {
+            var isAdmin = prompt("Admin şifresini girin:");
+            if (isAdmin === adminPassword) {
                 var itirafID = prompt("Silmek istediğiniz itirafın ID'sini girin:");
-                var itirafElement = document.getElementById(itirafID);
-                if (itirafElement) {
-                    itirafElement.remove();
+                var confession = document.getElementById(itirafID);
+                if (confession) {
+                    confession.remove();
                 } else {
                     alert("Böyle bir itiraf bulunamadı!");
                 }
@@ -196,57 +205,57 @@
             }
         });
 
-        // Müzik ekle button
+        // Arka planı değiştir butonu
+        document.getElementById("arka-plan-degistir").addEventListener("click", function() {
+            var isAdmin = prompt("Admin şifresini girin:");
+            if (isAdmin === adminPassword) {
+                var newBackground = prompt("Yeni arka plan resmi veya video URL'sini girin:");
+                document.body.style.backgroundImage = "url('" + newBackground + "')";
+            } else {
+                alert("Yanlış admin şifresi!");
+            }
+        });
+
+        // Müzik eklebutonu
         document.getElementById("muzik-ekle").addEventListener("click", function() {
-            var password = prompt("Admin şifresini girin:");
-            if (checkAdminPassword(password)) {
-                var yeniMuzik = prompt("Yeni müzik URL'sini girin:");
-                var audioElement = document.createElement("audio");
-                audioElement.src = yeniMuzik;
-                audioElement.controls = true;
-                document.body.appendChild(audioElement);
+            var isAdmin = prompt("Admin şifresini girin:");
+            if (isAdmin === adminPassword) {
+                var musicURL = prompt("Yeni müzik URL'sini girin:");
+                var audio = new Audio(musicURL);
+                audio.play();
             } else {
                 alert("Yanlış admin şifresi!");
             }
         });
 
         document.getElementById("paylas-button").addEventListener("click", function() {
-    var itiraf = document.getElementById("itiraf").value;
-    var itirafMesaj = document.getElementById("itiraf-mesaj");
-    if (itiraf.trim() !== "") {
-        // Itiraf mesajını göster
-        itirafMesaj.style.display = "block";
-        
-        // Itiraf divini oluştur
-        var confessionDiv = document.createElement("div");
-        confessionDiv.classList.add("confession");
-        var confessionID = "confession-" + Date.now(); // Unique ID
-        confessionDiv.id = confessionID;
-        confessionDiv.innerHTML = "<strong>ID:</strong> " + confessionID + "<br>" + itiraf;
+            var itiraf = document.getElementById("itiraf").value;
+            var itirafMesaj = document.getElementById("itiraf-mesaj");
+            if (itiraf.trim() !== "") {
+                var confessionID = "confession-" + Date.now(); // Rastgele bir ID oluştur
+                var confessionHTML = '<div class="confession" id="' + confessionID + '"><p>' + itiraf + '</p><span>ID: ' + confessionID + '</span></div>';
+                var confessionList = document.getElementById("confession-list");
+                confessionList.insertAdjacentHTML("beforeend", confessionHTML);
+                // Itiraf mesajını göster
+                itirafMesaj.style.display = "block";
+                // Itiraf alanını temizle
+                document.getElementById("itiraf").value = "";
+                // 3 saniye sonra mesajı gizle
+                setTimeout(function() {
+                    itirafMesaj.style.display = "none";
+                }, 3000);
+            } else {
+                alert("Lütfen bir itiraf yazın!");
+            }
+        });
 
-        // Confession listesine ekle
-        var confessionList = document.getElementById("confession-list");
-        confessionList.appendChild(confessionDiv);
-
-        // Itiraf alanını temizle
-        document.getElementById("itiraf").value = "";
-
-        // 3 saniye sonra mesajı gizle
-        setTimeout(function() {
-            itirafMesaj.style.display = "none";
-        }, 3000);
-    } else {
-        alert("Lütfen bir itiraf yazın!");
-    }
-});
-
-function showPage(pageId) {
-    var pages = document.querySelectorAll("section");
-    for (var i = 0; i < pages.length; i++) {
-        pages[i].style.display = "none";
-    }
-    document.getElementById(pageId).style.display = "block";
-}
-</script>
+        function showPage(pageId) {
+            var pages = document.querySelectorAll("section");
+            for (var i = 0; i < pages.length; i++) {
+                pages[i].style.display = "none";
+            }
+            document.getElementById(pageId).style.display = "block";
+        }
+    </script>
 </body>
 </html>
