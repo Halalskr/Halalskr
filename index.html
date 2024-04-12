@@ -150,6 +150,12 @@
         <p>&copy; 2024 Itiraf Sitesi</p>
     </footer>
 
+    <!-- Müzik veya arka plan olarak kullanılacak YouTube video URL'si -->
+    <input type="text" id="youtube-url" placeholder="YouTube Video URL">
+
+    <!-- Müzik ekle butonu -->
+    <button id="muzik-ekle">Müzik Ekle</button>
+
     <script>
         var adminPassword = "BOZKURT"; // Admin şifresi
 
@@ -211,7 +217,8 @@
             if (isAdmin === adminPassword) {
                 var newBackground = prompt("Yeni arka plan resmi veya video URL'sini girin:");
                 document.body.style.backgroundImage = "url('" + newBackground + "')";
-            } else {alert("Yanlış admin şifresi!");
+            } else {
+                alert("Yanlış admin şifresi!");
             }
         });
 
@@ -258,3 +265,4 @@
     </script>
 </body>
 </html>
+ ve JavaScript'i içeriyor. Arka planı değiştirme ve müzik ekleme gibi özellikler de dahil olmak üzere yönetici işlevselliğini de sağlıyor. Anc
