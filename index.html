@@ -211,12 +211,11 @@
             if (isAdmin === adminPassword) {
                 var newBackground = prompt("Yeni arka plan resmi veya video URL'sini girin:");
                 document.body.style.backgroundImage = "url('" + newBackground + "')";
-            } else {
-                alert("Yanlış admin şifresi!");
+            } else {alert("Yanlış admin şifresi!");
             }
         });
 
-        // Müzik eklebutonu
+        // Müzik ekle butonu
         document.getElementById("muzik-ekle").addEventListener("click", function() {
             var isAdmin = prompt("Admin şifresini girin:");
             if (isAdmin === adminPassword) {
