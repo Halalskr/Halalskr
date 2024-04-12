@@ -1,139 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat & Code Assistant</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: black; /* Arka plan rengi */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serdar Yazısı</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #111;
+    }
+    
+    .text {
+        font-size: 100px;
+        font-family: 'Arial', sans-serif;
+        color: #ff0; /* Sarı renk */
+        position: relative;
+    }
+    
+    .text::before {
+        content: 'SERDAR';
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        color: #0ff; /* Mavi renk */
+        animation: flicker 1.5s infinite alternate;
+    }
+    
+    @keyframes flicker {
+        0% {
+            text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #111; /* Sohbet kutusu arka plan rengi */
+        100% {
+            text-shadow: 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 50px #0ff, 0 0 60px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 90px #0ff, 0 0 100px #0ff, 0 0 150px #0ff;
         }
-
-        .chatbox {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-
-        .input-container {
-            display: flex;
-        }
-
-        .input-container input[type="text"] {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px 0 0 5px;
-            background-color: #222; /* Giriş kutusu arka plan rengi */
-            color: white; /* Giriş kutusu metin rengi */
-        }
-
-        .input-container button {
-            padding: 10px 20px;
-            background-color: #4CAF50; /* Gönder butonu arka plan rengi */
-            color: white;
-            border: 1px solid #4CAF50;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-        }
-
-        .input-container button:hover {
-            background-color: #45a049;
-            border: 1px solid #45a049;
-        }
-
-        /* Mesaj stilleri */
-        .message {
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-            max-width: 70%;
-        }
-
-        .user {
-            background-color: #4CAF50; /* Kullanıcı mesajı arka plan rengi */
-            align-self: flex-end;
-        }
-
-        .response {
-            background-color: #f44336; /* Yanıt mesajı arka plan rengi */
-        }
-    </style>
+    }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div id="chatbox" class="chatbox"></div>
-        <div class="input-container">
-            <input id="chatInput" type="text" placeholder="Type your message or code">
-            <button id="sendButton">Send</button>
-        </div>
-    </div>
-
-    <script>
-        const chatbox = document.getElementById('chatbox');
-        const chatInput = document.getElementById('chatInput');
-        const sendButton = document.getElementById('sendButton');
-
-        sendButton.addEventListener('click', sendMessage);
-
-        async function sendMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                displayMessage(message, true);
-                chatInput.value = '';
-
-                try {
-                    const apiKey = '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';
-                    const apiUrl = 'https://api.openai.com/v1/completions';
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKey}`
-                        },
-                        body: JSON.stringify({
-                            prompt: message,
-                            max_tokens: 50 // İsteğe bağlı: Alınan yanıtın maksimum uzunluğu
-                        })
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        const answer = data.choices[0].text.trim();
-                        displayMessage(answer, false);
-                    } else {
-                        throw new Error('Failed to get response from API');
-                    }
-                } catch (error) {
-                    displayMessage('An error occurred while fetching response.', false);
-                    console.error(error);
-                }
-            }
-        }
-
-        function displayMessage(message, isUser) {
-            const msgElem = document.createElement('div');
-            msgElem.textContent = message;
-            msgElem.className = isUser ? 'message user' : 'message response';
-            chatbox.appendChild(msgElem);
-        }
-    </script>
+<div class="text">SERDAR</div>
 </body>
 </html>
